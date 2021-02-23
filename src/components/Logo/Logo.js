@@ -12,6 +12,7 @@ const Logo = () => {
                         className='pa3'
                         src={brain}
                         height='120'
+                        alt='neural network brain'
                     >
 
                     </img>
