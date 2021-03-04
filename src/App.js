@@ -97,7 +97,7 @@ class App extends Component {
 
   onButtonSubmit() {
     this.setState({ imageURL: this.state.input });
-    fetch('http://localhost:3000/imageurl', {
+    fetch('https://boiling-savannah-46796.herokuapp.com/imageurl', {
       method: 'post',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -107,7 +107,7 @@ class App extends Component {
       .then((response) => response.json())
       .then((response) => {
         if (response) {
-          fetch('http://localhost:3000/image', {
+          fetch('https://boiling-savannah-46796.herokuapp.com/image', {
             method: 'put',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({

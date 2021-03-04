@@ -23,7 +23,7 @@ class Signin extends Component {
 
   onSubmitSignIn() {
     if (this.state.signInEmail && this.state.signInPassword) {
-      fetch('http://localhost:3000/signin', {
+      fetch('https://boiling-savannah-46796.herokuapp.com/signin', {
         method: 'post',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -37,7 +37,8 @@ class Signin extends Component {
             this.props.loadUser(user);
             this.props.onRouteChange('home');
           }
-        });
+        })
+        .catch((err) => console.log(err));
     }
   }
   render() {

@@ -27,9 +27,8 @@ class Register extends Component {
   }
 
   onSubmitRegister() {
-    console.log();
     if (this.state.email && this.state.password && this.state.name) {
-      fetch('http://localhost:3000/register', {
+      fetch('https://boiling-savannah-46796.herokuapp.com/register', {
         method: 'post',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
@@ -44,7 +43,8 @@ class Register extends Component {
             this.props.loadUser(user);
             this.props.onRouteChange('home');
           }
-        });
+        })
+        .catch((err) => console.log(err));
     }
   }
 
