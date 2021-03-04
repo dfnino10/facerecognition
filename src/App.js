@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
 import 'tachyons';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
@@ -10,10 +9,6 @@ import Rank from './components/Rank/Rank';
 import Signin from './components/Signin/Signin';
 import Register from './components/Register/Register';
 import './App.css';
-
-const app = new Clarifai.App({
-  apiKey: 'ceaee29655d94d2fbaa40e5c34e99283',
-});
 
 const particlesOptions = {
   particles: {
@@ -27,23 +22,26 @@ const particlesOptions = {
   },
 };
 
+const initialState = {
+  input: '',
+  imageURL: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    email: '',
+    name: '',
+    entries: 0,
+    joined: '',
+  },
+};
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageURL: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        email: '',
-        name: '',
-        entries: 0,
-        joined: '',
-      },
-    };
+    this.state = initialState;
+
     this.onInputChange = this.onInputChange.bind(this);
     this.onButtonSubmit = this.onButtonSubmit.bind(this);
     this.displayFaceBox = this.displayFaceBox.bind(this);
@@ -89,7 +87,7 @@ class App extends Component {
   onRouteChange(route) {
     this.setState({ route: route });
     if (route === 'signout') {
-      this.setState({ isSignedIn: false });
+      this.setState(initialState);
     } else if (route === 'home') {
       this.setState({ isSignedIn: true });
     } else if (route === 'register') {
@@ -99,12 +97,14 @@ class App extends Component {
 
   onButtonSubmit() {
     this.setState({ imageURL: this.state.input });
-    app.models
-      .predict(
-        Clarifai.FACE_DETECT_MODEL,
-        // THE JPG
-        this.state.input
-      )
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        input: this.state.input,
+      }),
+    })
+      .then((response) => response.json())
       .then((response) => {
         if (response) {
           fetch('http://localhost:3000/image', {
@@ -117,7 +117,8 @@ class App extends Component {
             .then((response) => response.json())
             .then((count) => {
               this.setState(Object.assign(this.state.user, { entries: count }));
-            });
+            })
+            .catch((err) => console.log(err));
         }
         this.displayFaceBox(this.calculateFaceLocation(response));
       })
